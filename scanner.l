@@ -19,8 +19,10 @@
 
 	#include <stdio.h>
 	#include "y.tab.h"
+  #include "SymbolTable.h"
 
 	FILE *fp;
+  extern FILE *f_asm;
 	int num_lines = 0, num_chars = 0;
 	char str[300];
 	char tmp_str[300];
@@ -34,6 +36,7 @@
 	void store_text();
 	void print_token();
 	void error_handling();
+ char* copys();
 %}
 
 %x COMMENT PRAGMA
@@ -105,15 +108,33 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
 "digitalWrite(" {
 	BEGIN(DIGITALWRITE);
 	}
-
-<DIGITALWRITE>{INT} {
+ 
+ <DIGITALWRITE>{INT} {
 	int n = atoi(yytext);
-	fprintf(f_asm, "    movi $r0, %d\n, n");
+	fprintf(f_asm, "    movi $r0, %d\n", n);
 	}
 
 <DIGITALWRITE>"LOW" {
 	fprintf(f_asm, "    movi $r1, 0\n");
 	}
+ 
+<DIGITALWRITE>{ID} {
+        int index = look_up_symbol(yytext);
+
+        /* Load to r0 */
+        switch(table[index].mode)
+        {
+            case ARGUMENT_MODE:
+                fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
+                break;
+            case LOCAL_MODE:
+                fprintf(f_asm, "    lwi $r0, [$fp-%d]\n",table[index].offset*4);
+                break;
+            /* global */
+        }
+    }
+
+
 
 <DIGITALWRITE>"HIGH" {
 	fprintf(f_asm, "    movi $r1, 1\n");
@@ -131,7 +152,24 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
   int n = atoi(yytext);
   fprintf(f_asm, "    movi $r0, %d\n", n);
   }
-  
+
+<DELAY>{ID} {
+        int index = look_up_symbol(yytext);
+
+        /* Load to r0 */
+        switch(table[index].mode)
+        {
+            case ARGUMENT_MODE:
+                fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
+                break;
+            case LOCAL_MODE:
+                fprintf(f_asm, "    lwi $r0, [$fp-%d]\n",table[index].offset*4);
+                break;
+            /* global */
+        }
+       
+    }
+
 <DELAY>");" {
   fprintf(f_asm, "    bal delay\n");
   BEGIN(INITIAL);
@@ -281,8 +319,7 @@ int yywrap(){
 
 void print_line(){
     if(sourceon == SOURCEON){
-	//fprintf(fp,"%d:%s\n", num_lines, str);
-	printf("%d:%s\n", num_lines, str);
+	    printf("%d:%s\n", num_lines, str);
     }
 	memset(str, 0, strlen(str));
 	num_chars = 0;
@@ -298,10 +335,8 @@ void print_token(){
 	if(tokenType == STRING_L){
 		strcpy(tmp_str, yytext+1);
 		tmp_str[yyleng-2] = 0;
-		//fprintf(fp,"#%s:%s\n", keyName[tokenType], tmp_str);
-        	printf("#%s:%s\n", keyName[tokenType], tmp_str);
+ 	  printf("#%s:%s\n", keyName[tokenType], tmp_str);
 	}else{
-		//fprintf(fp,"#%s:%s\n", keyName[tokenType], yytext);
 		printf("#%s:%s\n", keyName[tokenType], yytext);
 	}
     }

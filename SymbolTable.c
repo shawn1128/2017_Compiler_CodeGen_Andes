@@ -45,7 +45,9 @@ char *s;
    else {
     table[cur_counter].scope = cur_scope;
     table[cur_counter].name = copys(s);
+    printf("scope = %d, name = %s, cur_counter = %d, offset = %d\n", table[cur_counter].scope, table[cur_counter].name, cur_counter, table[cur_counter].offset);
     cur_counter++;
+    
   }
    return(s);
 }
@@ -89,6 +91,7 @@ int scope;
      }
    if (i<0) cur_counter = 0;
    cur_counter = i+1;
+   printf("cur_counter = %d\n", cur_counter);
   
 }
 
@@ -104,7 +107,7 @@ char *s;
 
   int i,j,index;
   int total_args;
-
+  printf("FUCK\n");
    index = look_up_symbol(s);
    if (index<0) err("Error in function header");
    else {
@@ -143,7 +146,7 @@ char *functor;
   for (j=total_locals, i=cur_counter-1;j>0; i--,j--)
         {
           table[i].scope= cur_scope;
-          table[i].offset= j;
+          //table[i].offset= j;
           table[i].mode  = LOCAL_MODE;
         }
 
@@ -215,6 +218,7 @@ void printTable()
 {
   int i;
   puts("\n----");
+  printf("cur_counter = %d\n", cur_counter);
   for(i = 0; i < cur_counter; i++){
     printf("% -10s    scope:% -5d     offset:% -5d    total_args:% -5d    total_locals:% -5d\n",table[i].name, table[i].scope, table[i].offset, table[i].total_args, table[i].total_locals);
 

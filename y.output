@@ -1,0 +1,3560 @@
+   0  $accept : Program $end
+
+   1  Program : Pre_Dec
+   2          | Program Pre_Dec
+
+   3  Pre_Dec : Func_Def
+   4          | Dec
+
+   5  $$1 :
+
+   6  $$2 :
+
+   7  Func_Def : Func_Dec '{' $$1 Dec_List $$2 Statement_List '}'
+
+   8  $$3 :
+
+   9  Func_Dec : Re_Type_Spec IDENTIFIER $$3 '(' Para_List ')'
+
+  10  Dec : Func_Dec1
+  11      | Normal_Dec
+
+  12  Func_Dec1 : Func_Dec ';'
+
+  13  Normal_Dec : Re_Type_Spec Normal_Dec_List ';'
+
+  14  Normal_Dec_List : Normal_Dec_One
+  15                  | Normal_Dec_List ',' Normal_Dec_One
+
+  16  Normal_Dec_One : IDENTIFIER
+  17                 | Array
+  18                 | IDENTIFIER '=' Init_Exp
+  19                 | Array '=' Array_Cont
+
+  20  Para_List : Para
+  21            | Para_List ',' Para
+
+  22  Para : Re_Type_Spec IDENTIFIER
+  23       | Re_Type_Spec Array
+  24       |
+
+  25  Array : IDENTIFIER Array_P
+
+  26  Array_P : '[' INT_P ']'
+  27          | Array_P '[' INT_P ']'
+
+  28  Array_Cont : '{' '}'
+  29             | '{' Init_Exp_List '}'
+
+  30  Var : IDENTIFIER
+  31      | IDENTIFIER Array_Exp
+
+  32  Re_Type_Spec : INT
+  33               | CHAR
+  34               | BOOL
+  35               | DOUBLE
+  36               | VOID
+
+  37  $$4 :
+
+  38  $$5 :
+
+  39  Main_Content_Func : '{' $$4 Dec_List $$5 Statement_List '}'
+
+  40  Dec_List :
+  41           | Dec_List Dec
+
+  42  Statement : Simple_S
+  43            | Switch_S
+  44            | While_S
+  45            | For_S
+  46            | IF_S
+  47            | End_S
+
+  48  Simple_S : Var '=' Exp ';'
+
+  49  Array_Exp : '[' Exp ']'
+  50            | Array_Exp '[' Exp ']'
+
+  51  Switch_S : SWITCH '(' IDENTIFIER ')' '{' Switch_Cont '}'
+
+  52  Switch_Cont : Case_L
+  53              | Case_L Default_Cont
+
+  54  Case_L : Case_One
+  55         | Case_L Case_One
+
+  56  Case_One : CASE INT_P ':' Statement_Many
+  57           | CASE CHAR_P ':' Statement_Many
+
+  58  Statement_Many :
+  59                 | Statement_Many Statement
+
+  60  Default_Cont : DEFAULT ':' Statement_Many
+
+  61  Statement_List :
+  62                 | Statement_List Statement
+
+  63  While_S : WHILE '(' Exp ')' Main_Content_Func
+  64          | DO Main_Content_Func WHILE '(' Exp ')' ';'
+
+  65  For_S : FOR '(' For_Exp For_Exp Exp ')' Main_Content_Func
+
+  66  For_Exp : ';'
+  67          | Exp ';'
+
+  68  IF_S : IF '(' Exp ')' Main_Content_Func
+  69       | IF '(' Exp ')' Main_Content_Func ELSE Main_Content_Func
+
+  70  End_S : CONTINUE ';'
+  71        | BREAK ';'
+  72        | RETURN ';'
+  73        | RETURN Exp ';'
+
+  74  Exp : Log_Or_Exp
+
+  75  Log_Or_Exp : Log_And_Exp
+  76             | Log_Or_Exp OR2 Log_And_Exp
+
+  77  Log_And_Exp : Log_Not_Exp
+  78              | Log_And_Exp AND2 Log_Not_Exp
+
+  79  Log_Not_Exp : Com_Exp
+  80              | N Com_Exp
+
+  81  Com_Exp : Add_Min_Exp
+  82          | Com_Exp SLT Add_Min_Exp
+  83          | Com_Exp SLTE Add_Min_Exp
+  84          | Com_Exp EE Add_Min_Exp
+  85          | Com_Exp BLTE Add_Min_Exp
+  86          | Com_Exp BLT Add_Min_Exp
+  87          | Com_Exp NEQ Add_Min_Exp
+
+  88  Add_Min_Exp : Mul_Exp
+  89              | Add_Min_Exp PLUS Mul_Exp
+  90              | Add_Min_Exp MINUS Mul_Exp
+
+  91  Mul_Exp : Unary_Exp
+  92          | Mul_Exp MUL Unary_Exp
+  93          | Mul_Exp DIV Unary_Exp
+  94          | Mul_Exp MOD Unary_Exp
+
+  95  Unary_Exp : Postfix_Exp
+  96            | MINUS Postfix_Exp
+
+  97  Postfix_Exp : Left_Exp
+  98              | Left_Exp PLUS2
+  99              | Left_Exp MINUS2
+
+ 100  Left_Exp : Var
+ 101           | INT_P
+ 102           | DOUBLE_P
+ 103           | CHAR_P
+ 104           | SCIEN_P
+ 105           | STR_P
+ 106           | TRUE
+ 107           | FALSE
+ 108           | '(' Exp ')'
+ 109           | IDENTIFIER '(' ')'
+ 110           | IDENTIFIER '(' Exp_List ')'
+
+ 111  Exp_List : Exp
+ 112           | Exp_List ',' Exp
+
+ 113  Init_Exp_List : Init_Exp
+ 114                | Init_Exp_List ',' Init_Exp
+
+ 115  Init_Exp : Init_Log_Or_Exp
+
+ 116  Init_Log_Or_Exp : Init_Log_And_Exp
+ 117                  | Init_Log_Or_Exp OR2 Init_Log_And_Exp
+
+ 118  Init_Log_And_Exp : Init_Log_Not_Exp
+ 119                   | Init_Log_And_Exp AND2 Init_Log_Not_Exp
+
+ 120  Init_Log_Not_Exp : Init_Com_Exp
+ 121                   | N Init_Com_Exp
+
+ 122  Init_Com_Exp : Init_Add_Min_Exp
+ 123               | Init_Com_Exp SLT Init_Add_Min_Exp
+ 124               | Init_Com_Exp SLTE Init_Add_Min_Exp
+ 125               | Init_Com_Exp EE Init_Add_Min_Exp
+ 126               | Init_Com_Exp BLTE Init_Add_Min_Exp
+ 127               | Init_Com_Exp BLT Init_Add_Min_Exp
+ 128               | Init_Com_Exp NEQ Init_Add_Min_Exp
+
+ 129  Init_Add_Min_Exp : Init_Mul_Exp
+ 130                   | Init_Add_Min_Exp PLUS Init_Mul_Exp
+ 131                   | Init_Add_Min_Exp MINUS Init_Mul_Exp
+
+ 132  Init_Mul_Exp : Init_Unary_Exp
+ 133               | Init_Mul_Exp MUL Init_Unary_Exp
+ 134               | Init_Mul_Exp DIV Init_Unary_Exp
+ 135               | Init_Mul_Exp MOD Init_Unary_Exp
+
+ 136  Init_Unary_Exp : Init_Postfix_Exp
+ 137                 | MINUS Postfix_Exp
+
+ 138  Init_Postfix_Exp : Init_Left_Exp
+ 139                   | Init_Left_Exp PLUS2
+ 140                   | Init_Left_Exp MINUS2
+
+ 141  Init_Left_Exp : Var
+ 142                | INT_P
+ 143                | DOUBLE_P
+ 144                | CHAR_P
+ 145                | SCIEN_P
+ 146                | STR_P
+ 147                | TRUE
+ 148                | FALSE
+ 149                | '(' Init_Exp ')'
+
+state 0
+	$accept : . Program $end  (0)
+
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	.  error
+
+	Program  goto 6
+	Func_Dec  goto 7
+	Func_Def  goto 8
+	Dec  goto 9
+	Func_Dec1  goto 10
+	Pre_Dec  goto 11
+	Re_Type_Spec  goto 12
+	Normal_Dec  goto 13
+
+
+state 1
+	Re_Type_Spec : VOID .  (36)
+
+	.  reduce 36
+
+
+state 2
+	Re_Type_Spec : INT .  (32)
+
+	.  reduce 32
+
+
+state 3
+	Re_Type_Spec : DOUBLE .  (35)
+
+	.  reduce 35
+
+
+state 4
+	Re_Type_Spec : BOOL .  (34)
+
+	.  reduce 34
+
+
+state 5
+	Re_Type_Spec : CHAR .  (33)
+
+	.  reduce 33
+
+
+state 6
+	$accept : Program . $end  (0)
+	Program : Program . Pre_Dec  (2)
+
+	$end  accept
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	.  error
+
+	Func_Dec  goto 7
+	Func_Def  goto 8
+	Dec  goto 9
+	Func_Dec1  goto 10
+	Pre_Dec  goto 14
+	Re_Type_Spec  goto 12
+	Normal_Dec  goto 13
+
+
+state 7
+	Func_Def : Func_Dec . '{' $$1 Dec_List $$2 Statement_List '}'  (7)
+	Func_Dec1 : Func_Dec . ';'  (12)
+
+	';'  shift 15
+	'{'  shift 16
+	.  error
+
+
+state 8
+	Pre_Dec : Func_Def .  (3)
+
+	.  reduce 3
+
+
+state 9
+	Pre_Dec : Dec .  (4)
+
+	.  reduce 4
+
+
+state 10
+	Dec : Func_Dec1 .  (10)
+
+	.  reduce 10
+
+
+state 11
+	Program : Pre_Dec .  (1)
+
+	.  reduce 1
+
+
+state 12
+	Func_Dec : Re_Type_Spec . IDENTIFIER $$3 '(' Para_List ')'  (9)
+	Normal_Dec : Re_Type_Spec . Normal_Dec_List ';'  (13)
+
+	IDENTIFIER  shift 17
+	.  error
+
+	Array  goto 18
+	Normal_Dec_List  goto 19
+	Normal_Dec_One  goto 20
+
+
+state 13
+	Dec : Normal_Dec .  (11)
+
+	.  reduce 11
+
+
+state 14
+	Program : Program Pre_Dec .  (2)
+
+	.  reduce 2
+
+
+state 15
+	Func_Dec1 : Func_Dec ';' .  (12)
+
+	.  reduce 12
+
+
+state 16
+	Func_Def : Func_Dec '{' . $$1 Dec_List $$2 Statement_List '}'  (7)
+	$$1 : .  (5)
+
+	.  reduce 5
+
+	$$1  goto 21
+
+
+state 17
+	Func_Dec : Re_Type_Spec IDENTIFIER . $$3 '(' Para_List ')'  (9)
+	Normal_Dec_One : IDENTIFIER .  (16)
+	Normal_Dec_One : IDENTIFIER . '=' Init_Exp  (18)
+	Array : IDENTIFIER . Array_P  (25)
+	$$3 : .  (8)
+
+	'='  shift 22
+	'['  shift 23
+	';'  reduce 16
+	'('  reduce 8
+	','  reduce 16
+
+	$$3  goto 24
+	Array_P  goto 25
+
+
+state 18
+	Normal_Dec_One : Array .  (17)
+	Normal_Dec_One : Array . '=' Array_Cont  (19)
+
+	'='  shift 26
+	';'  reduce 17
+	','  reduce 17
+
+
+state 19
+	Normal_Dec : Re_Type_Spec Normal_Dec_List . ';'  (13)
+	Normal_Dec_List : Normal_Dec_List . ',' Normal_Dec_One  (15)
+
+	';'  shift 27
+	','  shift 28
+	.  error
+
+
+state 20
+	Normal_Dec_List : Normal_Dec_One .  (14)
+
+	.  reduce 14
+
+
+state 21
+	Func_Def : Func_Dec '{' $$1 . Dec_List $$2 Statement_List '}'  (7)
+	Dec_List : .  (40)
+
+	.  reduce 40
+
+	Dec_List  goto 29
+
+
+state 22
+	Normal_Dec_One : IDENTIFIER '=' . Init_Exp  (18)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Exp  goto 43
+	Init_Log_Or_Exp  goto 44
+	Init_Log_And_Exp  goto 45
+	Init_Log_Not_Exp  goto 46
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 23
+	Array_P : '[' . INT_P ']'  (26)
+
+	INT_P  shift 52
+	.  error
+
+
+state 24
+	Func_Dec : Re_Type_Spec IDENTIFIER $$3 . '(' Para_List ')'  (9)
+
+	'('  shift 53
+	.  error
+
+
+state 25
+	Array : IDENTIFIER Array_P .  (25)
+	Array_P : Array_P . '[' INT_P ']'  (27)
+
+	'['  shift 54
+	';'  reduce 25
+	'='  reduce 25
+	')'  reduce 25
+	','  reduce 25
+
+
+state 26
+	Normal_Dec_One : Array '=' . Array_Cont  (19)
+
+	'{'  shift 55
+	.  error
+
+	Array_Cont  goto 56
+
+
+state 27
+	Normal_Dec : Re_Type_Spec Normal_Dec_List ';' .  (13)
+
+	.  reduce 13
+
+
+state 28
+	Normal_Dec_List : Normal_Dec_List ',' . Normal_Dec_One  (15)
+
+	IDENTIFIER  shift 57
+	.  error
+
+	Array  goto 18
+	Normal_Dec_One  goto 58
+
+
+state 29
+	Func_Def : Func_Dec '{' $$1 Dec_List . $$2 Statement_List '}'  (7)
+	Dec_List : Dec_List . Dec  (41)
+	$$2 : .  (6)
+
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	IDENTIFIER  reduce 6
+	FOR  reduce 6
+	WHILE  reduce 6
+	DO  reduce 6
+	IF  reduce 6
+	SWITCH  reduce 6
+	RETURN  reduce 6
+	BREAK  reduce 6
+	CONTINUE  reduce 6
+	'}'  reduce 6
+
+	Func_Dec  goto 59
+	Dec  goto 60
+	Func_Dec1  goto 10
+	$$2  goto 61
+	Re_Type_Spec  goto 12
+	Normal_Dec  goto 13
+
+
+state 30
+	Var : IDENTIFIER .  (30)
+	Var : IDENTIFIER . Array_Exp  (31)
+
+	'['  shift 62
+	';'  reduce 30
+	'='  reduce 30
+	')'  reduce 30
+	'}'  reduce 30
+	PLUS2  reduce 30
+	MINUS2  reduce 30
+	MUL  reduce 30
+	DIV  reduce 30
+	MOD  reduce 30
+	PLUS  reduce 30
+	MINUS  reduce 30
+	AND2  reduce 30
+	OR2  reduce 30
+	NEQ  reduce 30
+	SLT  reduce 30
+	BLT  reduce 30
+	SLTE  reduce 30
+	BLTE  reduce 30
+	EE  reduce 30
+	','  reduce 30
+
+	Array_Exp  goto 63
+
+
+state 31
+	Init_Left_Exp : INT_P .  (142)
+
+	.  reduce 142
+
+
+state 32
+	Init_Left_Exp : DOUBLE_P .  (143)
+
+	.  reduce 143
+
+
+state 33
+	Init_Left_Exp : SCIEN_P .  (145)
+
+	.  reduce 145
+
+
+state 34
+	Init_Left_Exp : CHAR_P .  (144)
+
+	.  reduce 144
+
+
+state 35
+	Init_Left_Exp : STR_P .  (146)
+
+	.  reduce 146
+
+
+state 36
+	Init_Left_Exp : TRUE .  (147)
+
+	.  reduce 147
+
+
+state 37
+	Init_Left_Exp : FALSE .  (148)
+
+	.  reduce 148
+
+
+state 38
+	Init_Left_Exp : '(' . Init_Exp ')'  (149)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Exp  goto 64
+	Init_Log_Or_Exp  goto 44
+	Init_Log_And_Exp  goto 45
+	Init_Log_Not_Exp  goto 46
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 39
+	Init_Unary_Exp : MINUS . Postfix_Exp  (137)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Postfix_Exp  goto 76
+
+
+state 40
+	Init_Log_Not_Exp : N . Init_Com_Exp  (121)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Com_Exp  goto 77
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 41
+	Init_Left_Exp : Var .  (141)
+
+	.  reduce 141
+
+
+state 42
+	Init_Postfix_Exp : Init_Left_Exp .  (138)
+	Init_Postfix_Exp : Init_Left_Exp . PLUS2  (139)
+	Init_Postfix_Exp : Init_Left_Exp . MINUS2  (140)
+
+	PLUS2  shift 78
+	MINUS2  shift 79
+	';'  reduce 138
+	')'  reduce 138
+	'}'  reduce 138
+	MUL  reduce 138
+	DIV  reduce 138
+	MOD  reduce 138
+	PLUS  reduce 138
+	MINUS  reduce 138
+	AND2  reduce 138
+	OR2  reduce 138
+	NEQ  reduce 138
+	SLT  reduce 138
+	BLT  reduce 138
+	SLTE  reduce 138
+	BLTE  reduce 138
+	EE  reduce 138
+	','  reduce 138
+
+
+state 43
+	Normal_Dec_One : IDENTIFIER '=' Init_Exp .  (18)
+
+	.  reduce 18
+
+
+state 44
+	Init_Exp : Init_Log_Or_Exp .  (115)
+	Init_Log_Or_Exp : Init_Log_Or_Exp . OR2 Init_Log_And_Exp  (117)
+
+	OR2  shift 80
+	';'  reduce 115
+	')'  reduce 115
+	'}'  reduce 115
+	','  reduce 115
+
+
+state 45
+	Init_Log_Or_Exp : Init_Log_And_Exp .  (116)
+	Init_Log_And_Exp : Init_Log_And_Exp . AND2 Init_Log_Not_Exp  (119)
+
+	AND2  shift 81
+	';'  reduce 116
+	')'  reduce 116
+	'}'  reduce 116
+	OR2  reduce 116
+	','  reduce 116
+
+
+state 46
+	Init_Log_And_Exp : Init_Log_Not_Exp .  (118)
+
+	.  reduce 118
+
+
+state 47
+	Init_Log_Not_Exp : Init_Com_Exp .  (120)
+	Init_Com_Exp : Init_Com_Exp . SLT Init_Add_Min_Exp  (123)
+	Init_Com_Exp : Init_Com_Exp . SLTE Init_Add_Min_Exp  (124)
+	Init_Com_Exp : Init_Com_Exp . EE Init_Add_Min_Exp  (125)
+	Init_Com_Exp : Init_Com_Exp . BLTE Init_Add_Min_Exp  (126)
+	Init_Com_Exp : Init_Com_Exp . BLT Init_Add_Min_Exp  (127)
+	Init_Com_Exp : Init_Com_Exp . NEQ Init_Add_Min_Exp  (128)
+
+	NEQ  shift 82
+	SLT  shift 83
+	BLT  shift 84
+	SLTE  shift 85
+	BLTE  shift 86
+	EE  shift 87
+	';'  reduce 120
+	')'  reduce 120
+	'}'  reduce 120
+	AND2  reduce 120
+	OR2  reduce 120
+	','  reduce 120
+
+
+state 48
+	Init_Com_Exp : Init_Add_Min_Exp .  (122)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 122
+	')'  reduce 122
+	'}'  reduce 122
+	AND2  reduce 122
+	OR2  reduce 122
+	NEQ  reduce 122
+	SLT  reduce 122
+	BLT  reduce 122
+	SLTE  reduce 122
+	BLTE  reduce 122
+	EE  reduce 122
+	','  reduce 122
+
+
+state 49
+	Init_Add_Min_Exp : Init_Mul_Exp .  (129)
+	Init_Mul_Exp : Init_Mul_Exp . MUL Init_Unary_Exp  (133)
+	Init_Mul_Exp : Init_Mul_Exp . DIV Init_Unary_Exp  (134)
+	Init_Mul_Exp : Init_Mul_Exp . MOD Init_Unary_Exp  (135)
+
+	MUL  shift 90
+	DIV  shift 91
+	MOD  shift 92
+	';'  reduce 129
+	')'  reduce 129
+	'}'  reduce 129
+	PLUS  reduce 129
+	MINUS  reduce 129
+	AND2  reduce 129
+	OR2  reduce 129
+	NEQ  reduce 129
+	SLT  reduce 129
+	BLT  reduce 129
+	SLTE  reduce 129
+	BLTE  reduce 129
+	EE  reduce 129
+	','  reduce 129
+
+
+state 50
+	Init_Mul_Exp : Init_Unary_Exp .  (132)
+
+	.  reduce 132
+
+
+state 51
+	Init_Unary_Exp : Init_Postfix_Exp .  (136)
+
+	.  reduce 136
+
+
+state 52
+	Array_P : '[' INT_P . ']'  (26)
+
+	']'  shift 93
+	.  error
+
+
+state 53
+	Func_Dec : Re_Type_Spec IDENTIFIER $$3 '(' . Para_List ')'  (9)
+	Para : .  (24)
+
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	')'  reduce 24
+	','  reduce 24
+
+	Re_Type_Spec  goto 94
+	Para_List  goto 95
+	Para  goto 96
+
+
+state 54
+	Array_P : Array_P '[' . INT_P ']'  (27)
+
+	INT_P  shift 97
+	.  error
+
+
+state 55
+	Array_Cont : '{' . '}'  (28)
+	Array_Cont : '{' . Init_Exp_List '}'  (29)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	'}'  shift 98
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Exp  goto 99
+	Init_Exp_List  goto 100
+	Init_Log_Or_Exp  goto 44
+	Init_Log_And_Exp  goto 45
+	Init_Log_Not_Exp  goto 46
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 56
+	Normal_Dec_One : Array '=' Array_Cont .  (19)
+
+	.  reduce 19
+
+
+state 57
+	Normal_Dec_One : IDENTIFIER .  (16)
+	Normal_Dec_One : IDENTIFIER . '=' Init_Exp  (18)
+	Array : IDENTIFIER . Array_P  (25)
+
+	'='  shift 22
+	'['  shift 23
+	';'  reduce 16
+	','  reduce 16
+
+	Array_P  goto 25
+
+
+state 58
+	Normal_Dec_List : Normal_Dec_List ',' Normal_Dec_One .  (15)
+
+	.  reduce 15
+
+
+state 59
+	Func_Dec1 : Func_Dec . ';'  (12)
+
+	';'  shift 15
+	.  error
+
+
+state 60
+	Dec_List : Dec_List Dec .  (41)
+
+	.  reduce 41
+
+
+state 61
+	Func_Def : Func_Dec '{' $$1 Dec_List $$2 . Statement_List '}'  (7)
+	Statement_List : .  (61)
+
+	.  reduce 61
+
+	Statement_List  goto 101
+
+
+state 62
+	Array_Exp : '[' . Exp ']'  (49)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 104
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 63
+	Var : IDENTIFIER Array_Exp .  (31)
+	Array_Exp : Array_Exp . '[' Exp ']'  (50)
+
+	'['  shift 113
+	';'  reduce 31
+	'='  reduce 31
+	')'  reduce 31
+	']'  reduce 31
+	'}'  reduce 31
+	PLUS2  reduce 31
+	MINUS2  reduce 31
+	MUL  reduce 31
+	DIV  reduce 31
+	MOD  reduce 31
+	PLUS  reduce 31
+	MINUS  reduce 31
+	AND2  reduce 31
+	OR2  reduce 31
+	NEQ  reduce 31
+	SLT  reduce 31
+	BLT  reduce 31
+	SLTE  reduce 31
+	BLTE  reduce 31
+	EE  reduce 31
+	','  reduce 31
+
+
+state 64
+	Init_Left_Exp : '(' Init_Exp . ')'  (149)
+
+	')'  shift 114
+	.  error
+
+
+state 65
+	Var : IDENTIFIER .  (30)
+	Var : IDENTIFIER . Array_Exp  (31)
+	Left_Exp : IDENTIFIER . '(' ')'  (109)
+	Left_Exp : IDENTIFIER . '(' Exp_List ')'  (110)
+
+	'('  shift 115
+	'['  shift 62
+	';'  reduce 30
+	')'  reduce 30
+	']'  reduce 30
+	'}'  reduce 30
+	PLUS2  reduce 30
+	MINUS2  reduce 30
+	MUL  reduce 30
+	DIV  reduce 30
+	MOD  reduce 30
+	PLUS  reduce 30
+	MINUS  reduce 30
+	AND2  reduce 30
+	OR2  reduce 30
+	NEQ  reduce 30
+	SLT  reduce 30
+	BLT  reduce 30
+	SLTE  reduce 30
+	BLTE  reduce 30
+	EE  reduce 30
+	','  reduce 30
+
+	Array_Exp  goto 63
+
+
+state 66
+	Left_Exp : INT_P .  (101)
+
+	.  reduce 101
+
+
+state 67
+	Left_Exp : DOUBLE_P .  (102)
+
+	.  reduce 102
+
+
+state 68
+	Left_Exp : SCIEN_P .  (104)
+
+	.  reduce 104
+
+
+state 69
+	Left_Exp : CHAR_P .  (103)
+
+	.  reduce 103
+
+
+state 70
+	Left_Exp : STR_P .  (105)
+
+	.  reduce 105
+
+
+state 71
+	Left_Exp : TRUE .  (106)
+
+	.  reduce 106
+
+
+state 72
+	Left_Exp : FALSE .  (107)
+
+	.  reduce 107
+
+
+state 73
+	Left_Exp : '(' . Exp ')'  (108)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 116
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 74
+	Left_Exp : Var .  (100)
+
+	.  reduce 100
+
+
+state 75
+	Postfix_Exp : Left_Exp .  (97)
+	Postfix_Exp : Left_Exp . PLUS2  (98)
+	Postfix_Exp : Left_Exp . MINUS2  (99)
+
+	PLUS2  shift 117
+	MINUS2  shift 118
+	';'  reduce 97
+	')'  reduce 97
+	']'  reduce 97
+	'}'  reduce 97
+	MUL  reduce 97
+	DIV  reduce 97
+	MOD  reduce 97
+	PLUS  reduce 97
+	MINUS  reduce 97
+	AND2  reduce 97
+	OR2  reduce 97
+	NEQ  reduce 97
+	SLT  reduce 97
+	BLT  reduce 97
+	SLTE  reduce 97
+	BLTE  reduce 97
+	EE  reduce 97
+	','  reduce 97
+
+
+state 76
+	Init_Unary_Exp : MINUS Postfix_Exp .  (137)
+
+	.  reduce 137
+
+
+state 77
+	Init_Log_Not_Exp : N Init_Com_Exp .  (121)
+	Init_Com_Exp : Init_Com_Exp . SLT Init_Add_Min_Exp  (123)
+	Init_Com_Exp : Init_Com_Exp . SLTE Init_Add_Min_Exp  (124)
+	Init_Com_Exp : Init_Com_Exp . EE Init_Add_Min_Exp  (125)
+	Init_Com_Exp : Init_Com_Exp . BLTE Init_Add_Min_Exp  (126)
+	Init_Com_Exp : Init_Com_Exp . BLT Init_Add_Min_Exp  (127)
+	Init_Com_Exp : Init_Com_Exp . NEQ Init_Add_Min_Exp  (128)
+
+	NEQ  shift 82
+	SLT  shift 83
+	BLT  shift 84
+	SLTE  shift 85
+	BLTE  shift 86
+	EE  shift 87
+	';'  reduce 121
+	')'  reduce 121
+	'}'  reduce 121
+	AND2  reduce 121
+	OR2  reduce 121
+	','  reduce 121
+
+
+state 78
+	Init_Postfix_Exp : Init_Left_Exp PLUS2 .  (139)
+
+	.  reduce 139
+
+
+state 79
+	Init_Postfix_Exp : Init_Left_Exp MINUS2 .  (140)
+
+	.  reduce 140
+
+
+state 80
+	Init_Log_Or_Exp : Init_Log_Or_Exp OR2 . Init_Log_And_Exp  (117)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Log_And_Exp  goto 119
+	Init_Log_Not_Exp  goto 46
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 81
+	Init_Log_And_Exp : Init_Log_And_Exp AND2 . Init_Log_Not_Exp  (119)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Log_Not_Exp  goto 120
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 82
+	Init_Com_Exp : Init_Com_Exp NEQ . Init_Add_Min_Exp  (128)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 121
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 83
+	Init_Com_Exp : Init_Com_Exp SLT . Init_Add_Min_Exp  (123)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 122
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 84
+	Init_Com_Exp : Init_Com_Exp BLT . Init_Add_Min_Exp  (127)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 123
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 85
+	Init_Com_Exp : Init_Com_Exp SLTE . Init_Add_Min_Exp  (124)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 124
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 86
+	Init_Com_Exp : Init_Com_Exp BLTE . Init_Add_Min_Exp  (126)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 125
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 87
+	Init_Com_Exp : Init_Com_Exp EE . Init_Add_Min_Exp  (125)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Add_Min_Exp  goto 126
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 88
+	Init_Add_Min_Exp : Init_Add_Min_Exp PLUS . Init_Mul_Exp  (130)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Mul_Exp  goto 127
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 89
+	Init_Add_Min_Exp : Init_Add_Min_Exp MINUS . Init_Mul_Exp  (131)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Mul_Exp  goto 128
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 90
+	Init_Mul_Exp : Init_Mul_Exp MUL . Init_Unary_Exp  (133)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Unary_Exp  goto 129
+	Init_Postfix_Exp  goto 51
+
+
+state 91
+	Init_Mul_Exp : Init_Mul_Exp DIV . Init_Unary_Exp  (134)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Unary_Exp  goto 130
+	Init_Postfix_Exp  goto 51
+
+
+state 92
+	Init_Mul_Exp : Init_Mul_Exp MOD . Init_Unary_Exp  (135)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Unary_Exp  goto 131
+	Init_Postfix_Exp  goto 51
+
+
+state 93
+	Array_P : '[' INT_P ']' .  (26)
+
+	.  reduce 26
+
+
+state 94
+	Para : Re_Type_Spec . IDENTIFIER  (22)
+	Para : Re_Type_Spec . Array  (23)
+
+	IDENTIFIER  shift 132
+	.  error
+
+	Array  goto 133
+
+
+state 95
+	Func_Dec : Re_Type_Spec IDENTIFIER $$3 '(' Para_List . ')'  (9)
+	Para_List : Para_List . ',' Para  (21)
+
+	')'  shift 134
+	','  shift 135
+	.  error
+
+
+state 96
+	Para_List : Para .  (20)
+
+	.  reduce 20
+
+
+state 97
+	Array_P : Array_P '[' INT_P . ']'  (27)
+
+	']'  shift 136
+	.  error
+
+
+state 98
+	Array_Cont : '{' '}' .  (28)
+
+	.  reduce 28
+
+
+state 99
+	Init_Exp_List : Init_Exp .  (113)
+
+	.  reduce 113
+
+
+state 100
+	Array_Cont : '{' Init_Exp_List . '}'  (29)
+	Init_Exp_List : Init_Exp_List . ',' Init_Exp  (114)
+
+	'}'  shift 137
+	','  shift 138
+	.  error
+
+
+state 101
+	Func_Def : Func_Dec '{' $$1 Dec_List $$2 Statement_List . '}'  (7)
+	Statement_List : Statement_List . Statement  (62)
+
+	IDENTIFIER  shift 30
+	FOR  shift 139
+	WHILE  shift 140
+	DO  shift 141
+	IF  shift 142
+	SWITCH  shift 143
+	RETURN  shift 144
+	BREAK  shift 145
+	CONTINUE  shift 146
+	'}'  shift 147
+	.  error
+
+	Var  goto 148
+	Statement  goto 149
+	Simple_S  goto 150
+	Switch_S  goto 151
+	While_S  goto 152
+	For_S  goto 153
+	IF_S  goto 154
+	End_S  goto 155
+
+
+state 102
+	Unary_Exp : MINUS . Postfix_Exp  (96)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Postfix_Exp  goto 156
+
+
+state 103
+	Log_Not_Exp : N . Com_Exp  (80)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Com_Exp  goto 157
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 104
+	Array_Exp : '[' Exp . ']'  (49)
+
+	']'  shift 158
+	.  error
+
+
+state 105
+	Exp : Log_Or_Exp .  (74)
+	Log_Or_Exp : Log_Or_Exp . OR2 Log_And_Exp  (76)
+
+	OR2  shift 159
+	';'  reduce 74
+	')'  reduce 74
+	']'  reduce 74
+	','  reduce 74
+
+
+state 106
+	Log_Or_Exp : Log_And_Exp .  (75)
+	Log_And_Exp : Log_And_Exp . AND2 Log_Not_Exp  (78)
+
+	AND2  shift 160
+	';'  reduce 75
+	')'  reduce 75
+	']'  reduce 75
+	OR2  reduce 75
+	','  reduce 75
+
+
+state 107
+	Log_And_Exp : Log_Not_Exp .  (77)
+
+	.  reduce 77
+
+
+state 108
+	Log_Not_Exp : Com_Exp .  (79)
+	Com_Exp : Com_Exp . SLT Add_Min_Exp  (82)
+	Com_Exp : Com_Exp . SLTE Add_Min_Exp  (83)
+	Com_Exp : Com_Exp . EE Add_Min_Exp  (84)
+	Com_Exp : Com_Exp . BLTE Add_Min_Exp  (85)
+	Com_Exp : Com_Exp . BLT Add_Min_Exp  (86)
+	Com_Exp : Com_Exp . NEQ Add_Min_Exp  (87)
+
+	NEQ  shift 161
+	SLT  shift 162
+	BLT  shift 163
+	SLTE  shift 164
+	BLTE  shift 165
+	EE  shift 166
+	';'  reduce 79
+	')'  reduce 79
+	']'  reduce 79
+	AND2  reduce 79
+	OR2  reduce 79
+	','  reduce 79
+
+
+state 109
+	Com_Exp : Add_Min_Exp .  (81)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 81
+	')'  reduce 81
+	']'  reduce 81
+	AND2  reduce 81
+	OR2  reduce 81
+	NEQ  reduce 81
+	SLT  reduce 81
+	BLT  reduce 81
+	SLTE  reduce 81
+	BLTE  reduce 81
+	EE  reduce 81
+	','  reduce 81
+
+
+state 110
+	Add_Min_Exp : Mul_Exp .  (88)
+	Mul_Exp : Mul_Exp . MUL Unary_Exp  (92)
+	Mul_Exp : Mul_Exp . DIV Unary_Exp  (93)
+	Mul_Exp : Mul_Exp . MOD Unary_Exp  (94)
+
+	MUL  shift 169
+	DIV  shift 170
+	MOD  shift 171
+	';'  reduce 88
+	')'  reduce 88
+	']'  reduce 88
+	PLUS  reduce 88
+	MINUS  reduce 88
+	AND2  reduce 88
+	OR2  reduce 88
+	NEQ  reduce 88
+	SLT  reduce 88
+	BLT  reduce 88
+	SLTE  reduce 88
+	BLTE  reduce 88
+	EE  reduce 88
+	','  reduce 88
+
+
+state 111
+	Mul_Exp : Unary_Exp .  (91)
+
+	.  reduce 91
+
+
+state 112
+	Unary_Exp : Postfix_Exp .  (95)
+
+	.  reduce 95
+
+
+state 113
+	Array_Exp : Array_Exp '[' . Exp ']'  (50)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 172
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 114
+	Init_Left_Exp : '(' Init_Exp ')' .  (149)
+
+	.  reduce 149
+
+
+state 115
+	Left_Exp : IDENTIFIER '(' . ')'  (109)
+	Left_Exp : IDENTIFIER '(' . Exp_List ')'  (110)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	')'  shift 173
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 174
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+	Exp_List  goto 175
+
+
+state 116
+	Left_Exp : '(' Exp . ')'  (108)
+
+	')'  shift 176
+	.  error
+
+
+state 117
+	Postfix_Exp : Left_Exp PLUS2 .  (98)
+
+	.  reduce 98
+
+
+state 118
+	Postfix_Exp : Left_Exp MINUS2 .  (99)
+
+	.  reduce 99
+
+
+state 119
+	Init_Log_Or_Exp : Init_Log_Or_Exp OR2 Init_Log_And_Exp .  (117)
+	Init_Log_And_Exp : Init_Log_And_Exp . AND2 Init_Log_Not_Exp  (119)
+
+	AND2  shift 81
+	';'  reduce 117
+	')'  reduce 117
+	'}'  reduce 117
+	OR2  reduce 117
+	','  reduce 117
+
+
+state 120
+	Init_Log_And_Exp : Init_Log_And_Exp AND2 Init_Log_Not_Exp .  (119)
+
+	.  reduce 119
+
+
+state 121
+	Init_Com_Exp : Init_Com_Exp NEQ Init_Add_Min_Exp .  (128)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 128
+	')'  reduce 128
+	'}'  reduce 128
+	AND2  reduce 128
+	OR2  reduce 128
+	NEQ  reduce 128
+	SLT  reduce 128
+	BLT  reduce 128
+	SLTE  reduce 128
+	BLTE  reduce 128
+	EE  reduce 128
+	','  reduce 128
+
+
+state 122
+	Init_Com_Exp : Init_Com_Exp SLT Init_Add_Min_Exp .  (123)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 123
+	')'  reduce 123
+	'}'  reduce 123
+	AND2  reduce 123
+	OR2  reduce 123
+	NEQ  reduce 123
+	SLT  reduce 123
+	BLT  reduce 123
+	SLTE  reduce 123
+	BLTE  reduce 123
+	EE  reduce 123
+	','  reduce 123
+
+
+state 123
+	Init_Com_Exp : Init_Com_Exp BLT Init_Add_Min_Exp .  (127)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 127
+	')'  reduce 127
+	'}'  reduce 127
+	AND2  reduce 127
+	OR2  reduce 127
+	NEQ  reduce 127
+	SLT  reduce 127
+	BLT  reduce 127
+	SLTE  reduce 127
+	BLTE  reduce 127
+	EE  reduce 127
+	','  reduce 127
+
+
+state 124
+	Init_Com_Exp : Init_Com_Exp SLTE Init_Add_Min_Exp .  (124)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 124
+	')'  reduce 124
+	'}'  reduce 124
+	AND2  reduce 124
+	OR2  reduce 124
+	NEQ  reduce 124
+	SLT  reduce 124
+	BLT  reduce 124
+	SLTE  reduce 124
+	BLTE  reduce 124
+	EE  reduce 124
+	','  reduce 124
+
+
+state 125
+	Init_Com_Exp : Init_Com_Exp BLTE Init_Add_Min_Exp .  (126)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 126
+	')'  reduce 126
+	'}'  reduce 126
+	AND2  reduce 126
+	OR2  reduce 126
+	NEQ  reduce 126
+	SLT  reduce 126
+	BLT  reduce 126
+	SLTE  reduce 126
+	BLTE  reduce 126
+	EE  reduce 126
+	','  reduce 126
+
+
+state 126
+	Init_Com_Exp : Init_Com_Exp EE Init_Add_Min_Exp .  (125)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . PLUS Init_Mul_Exp  (130)
+	Init_Add_Min_Exp : Init_Add_Min_Exp . MINUS Init_Mul_Exp  (131)
+
+	PLUS  shift 88
+	MINUS  shift 89
+	';'  reduce 125
+	')'  reduce 125
+	'}'  reduce 125
+	AND2  reduce 125
+	OR2  reduce 125
+	NEQ  reduce 125
+	SLT  reduce 125
+	BLT  reduce 125
+	SLTE  reduce 125
+	BLTE  reduce 125
+	EE  reduce 125
+	','  reduce 125
+
+
+state 127
+	Init_Add_Min_Exp : Init_Add_Min_Exp PLUS Init_Mul_Exp .  (130)
+	Init_Mul_Exp : Init_Mul_Exp . MUL Init_Unary_Exp  (133)
+	Init_Mul_Exp : Init_Mul_Exp . DIV Init_Unary_Exp  (134)
+	Init_Mul_Exp : Init_Mul_Exp . MOD Init_Unary_Exp  (135)
+
+	MUL  shift 90
+	DIV  shift 91
+	MOD  shift 92
+	';'  reduce 130
+	')'  reduce 130
+	'}'  reduce 130
+	PLUS  reduce 130
+	MINUS  reduce 130
+	AND2  reduce 130
+	OR2  reduce 130
+	NEQ  reduce 130
+	SLT  reduce 130
+	BLT  reduce 130
+	SLTE  reduce 130
+	BLTE  reduce 130
+	EE  reduce 130
+	','  reduce 130
+
+
+state 128
+	Init_Add_Min_Exp : Init_Add_Min_Exp MINUS Init_Mul_Exp .  (131)
+	Init_Mul_Exp : Init_Mul_Exp . MUL Init_Unary_Exp  (133)
+	Init_Mul_Exp : Init_Mul_Exp . DIV Init_Unary_Exp  (134)
+	Init_Mul_Exp : Init_Mul_Exp . MOD Init_Unary_Exp  (135)
+
+	MUL  shift 90
+	DIV  shift 91
+	MOD  shift 92
+	';'  reduce 131
+	')'  reduce 131
+	'}'  reduce 131
+	PLUS  reduce 131
+	MINUS  reduce 131
+	AND2  reduce 131
+	OR2  reduce 131
+	NEQ  reduce 131
+	SLT  reduce 131
+	BLT  reduce 131
+	SLTE  reduce 131
+	BLTE  reduce 131
+	EE  reduce 131
+	','  reduce 131
+
+
+state 129
+	Init_Mul_Exp : Init_Mul_Exp MUL Init_Unary_Exp .  (133)
+
+	.  reduce 133
+
+
+state 130
+	Init_Mul_Exp : Init_Mul_Exp DIV Init_Unary_Exp .  (134)
+
+	.  reduce 134
+
+
+state 131
+	Init_Mul_Exp : Init_Mul_Exp MOD Init_Unary_Exp .  (135)
+
+	.  reduce 135
+
+
+state 132
+	Para : Re_Type_Spec IDENTIFIER .  (22)
+	Array : IDENTIFIER . Array_P  (25)
+
+	'['  shift 23
+	')'  reduce 22
+	','  reduce 22
+
+	Array_P  goto 25
+
+
+state 133
+	Para : Re_Type_Spec Array .  (23)
+
+	.  reduce 23
+
+
+state 134
+	Func_Dec : Re_Type_Spec IDENTIFIER $$3 '(' Para_List ')' .  (9)
+
+	.  reduce 9
+
+
+state 135
+	Para_List : Para_List ',' . Para  (21)
+	Para : .  (24)
+
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	')'  reduce 24
+	','  reduce 24
+
+	Re_Type_Spec  goto 94
+	Para  goto 177
+
+
+state 136
+	Array_P : Array_P '[' INT_P ']' .  (27)
+
+	.  reduce 27
+
+
+state 137
+	Array_Cont : '{' Init_Exp_List '}' .  (29)
+
+	.  reduce 29
+
+
+state 138
+	Init_Exp_List : Init_Exp_List ',' . Init_Exp  (114)
+
+	IDENTIFIER  shift 30
+	INT_P  shift 31
+	DOUBLE_P  shift 32
+	SCIEN_P  shift 33
+	CHAR_P  shift 34
+	STR_P  shift 35
+	TRUE  shift 36
+	FALSE  shift 37
+	'('  shift 38
+	MINUS  shift 39
+	N  shift 40
+	.  error
+
+	Var  goto 41
+	Init_Left_Exp  goto 42
+	Init_Exp  goto 178
+	Init_Log_Or_Exp  goto 44
+	Init_Log_And_Exp  goto 45
+	Init_Log_Not_Exp  goto 46
+	Init_Com_Exp  goto 47
+	Init_Add_Min_Exp  goto 48
+	Init_Mul_Exp  goto 49
+	Init_Unary_Exp  goto 50
+	Init_Postfix_Exp  goto 51
+
+
+state 139
+	For_S : FOR . '(' For_Exp For_Exp Exp ')' Main_Content_Func  (65)
+
+	'('  shift 179
+	.  error
+
+
+state 140
+	While_S : WHILE . '(' Exp ')' Main_Content_Func  (63)
+
+	'('  shift 180
+	.  error
+
+
+state 141
+	While_S : DO . Main_Content_Func WHILE '(' Exp ')' ';'  (64)
+
+	'{'  shift 181
+	.  error
+
+	Main_Content_Func  goto 182
+
+
+state 142
+	IF_S : IF . '(' Exp ')' Main_Content_Func  (68)
+	IF_S : IF . '(' Exp ')' Main_Content_Func ELSE Main_Content_Func  (69)
+
+	'('  shift 183
+	.  error
+
+
+state 143
+	Switch_S : SWITCH . '(' IDENTIFIER ')' '{' Switch_Cont '}'  (51)
+
+	'('  shift 184
+	.  error
+
+
+state 144
+	End_S : RETURN . ';'  (72)
+	End_S : RETURN . Exp ';'  (73)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	';'  shift 185
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 186
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 145
+	End_S : BREAK . ';'  (71)
+
+	';'  shift 187
+	.  error
+
+
+state 146
+	End_S : CONTINUE . ';'  (70)
+
+	';'  shift 188
+	.  error
+
+
+state 147
+	Func_Def : Func_Dec '{' $$1 Dec_List $$2 Statement_List '}' .  (7)
+
+	.  reduce 7
+
+
+state 148
+	Simple_S : Var . '=' Exp ';'  (48)
+
+	'='  shift 189
+	.  error
+
+
+state 149
+	Statement_List : Statement_List Statement .  (62)
+
+	.  reduce 62
+
+
+state 150
+	Statement : Simple_S .  (42)
+
+	.  reduce 42
+
+
+state 151
+	Statement : Switch_S .  (43)
+
+	.  reduce 43
+
+
+state 152
+	Statement : While_S .  (44)
+
+	.  reduce 44
+
+
+state 153
+	Statement : For_S .  (45)
+
+	.  reduce 45
+
+
+state 154
+	Statement : IF_S .  (46)
+
+	.  reduce 46
+
+
+state 155
+	Statement : End_S .  (47)
+
+	.  reduce 47
+
+
+state 156
+	Unary_Exp : MINUS Postfix_Exp .  (96)
+
+	.  reduce 96
+
+
+state 157
+	Log_Not_Exp : N Com_Exp .  (80)
+	Com_Exp : Com_Exp . SLT Add_Min_Exp  (82)
+	Com_Exp : Com_Exp . SLTE Add_Min_Exp  (83)
+	Com_Exp : Com_Exp . EE Add_Min_Exp  (84)
+	Com_Exp : Com_Exp . BLTE Add_Min_Exp  (85)
+	Com_Exp : Com_Exp . BLT Add_Min_Exp  (86)
+	Com_Exp : Com_Exp . NEQ Add_Min_Exp  (87)
+
+	NEQ  shift 161
+	SLT  shift 162
+	BLT  shift 163
+	SLTE  shift 164
+	BLTE  shift 165
+	EE  shift 166
+	';'  reduce 80
+	')'  reduce 80
+	']'  reduce 80
+	AND2  reduce 80
+	OR2  reduce 80
+	','  reduce 80
+
+
+state 158
+	Array_Exp : '[' Exp ']' .  (49)
+
+	.  reduce 49
+
+
+state 159
+	Log_Or_Exp : Log_Or_Exp OR2 . Log_And_Exp  (76)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Log_And_Exp  goto 190
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 160
+	Log_And_Exp : Log_And_Exp AND2 . Log_Not_Exp  (78)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Log_Not_Exp  goto 191
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 161
+	Com_Exp : Com_Exp NEQ . Add_Min_Exp  (87)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 192
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 162
+	Com_Exp : Com_Exp SLT . Add_Min_Exp  (82)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 193
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 163
+	Com_Exp : Com_Exp BLT . Add_Min_Exp  (86)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 194
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 164
+	Com_Exp : Com_Exp SLTE . Add_Min_Exp  (83)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 195
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 165
+	Com_Exp : Com_Exp BLTE . Add_Min_Exp  (85)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 196
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 166
+	Com_Exp : Com_Exp EE . Add_Min_Exp  (84)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Add_Min_Exp  goto 197
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 167
+	Add_Min_Exp : Add_Min_Exp PLUS . Mul_Exp  (89)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Mul_Exp  goto 198
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 168
+	Add_Min_Exp : Add_Min_Exp MINUS . Mul_Exp  (90)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Mul_Exp  goto 199
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 169
+	Mul_Exp : Mul_Exp MUL . Unary_Exp  (92)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Unary_Exp  goto 200
+	Postfix_Exp  goto 112
+
+
+state 170
+	Mul_Exp : Mul_Exp DIV . Unary_Exp  (93)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Unary_Exp  goto 201
+	Postfix_Exp  goto 112
+
+
+state 171
+	Mul_Exp : Mul_Exp MOD . Unary_Exp  (94)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Unary_Exp  goto 202
+	Postfix_Exp  goto 112
+
+
+state 172
+	Array_Exp : Array_Exp '[' Exp . ']'  (50)
+
+	']'  shift 203
+	.  error
+
+
+state 173
+	Left_Exp : IDENTIFIER '(' ')' .  (109)
+
+	.  reduce 109
+
+
+state 174
+	Exp_List : Exp .  (111)
+
+	.  reduce 111
+
+
+state 175
+	Left_Exp : IDENTIFIER '(' Exp_List . ')'  (110)
+	Exp_List : Exp_List . ',' Exp  (112)
+
+	')'  shift 204
+	','  shift 205
+	.  error
+
+
+state 176
+	Left_Exp : '(' Exp ')' .  (108)
+
+	.  reduce 108
+
+
+state 177
+	Para_List : Para_List ',' Para .  (21)
+
+	.  reduce 21
+
+
+state 178
+	Init_Exp_List : Init_Exp_List ',' Init_Exp .  (114)
+
+	.  reduce 114
+
+
+state 179
+	For_S : FOR '(' . For_Exp For_Exp Exp ')' Main_Content_Func  (65)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	';'  shift 206
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 207
+	For_Exp  goto 208
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 180
+	While_S : WHILE '(' . Exp ')' Main_Content_Func  (63)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 209
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 181
+	Main_Content_Func : '{' . $$4 Dec_List $$5 Statement_List '}'  (39)
+	$$4 : .  (37)
+
+	.  reduce 37
+
+	$$4  goto 210
+
+
+state 182
+	While_S : DO Main_Content_Func . WHILE '(' Exp ')' ';'  (64)
+
+	WHILE  shift 211
+	.  error
+
+
+state 183
+	IF_S : IF '(' . Exp ')' Main_Content_Func  (68)
+	IF_S : IF '(' . Exp ')' Main_Content_Func ELSE Main_Content_Func  (69)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 212
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 184
+	Switch_S : SWITCH '(' . IDENTIFIER ')' '{' Switch_Cont '}'  (51)
+
+	IDENTIFIER  shift 213
+	.  error
+
+
+state 185
+	End_S : RETURN ';' .  (72)
+
+	.  reduce 72
+
+
+state 186
+	End_S : RETURN Exp . ';'  (73)
+
+	';'  shift 214
+	.  error
+
+
+state 187
+	End_S : BREAK ';' .  (71)
+
+	.  reduce 71
+
+
+state 188
+	End_S : CONTINUE ';' .  (70)
+
+	.  reduce 70
+
+
+state 189
+	Simple_S : Var '=' . Exp ';'  (48)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 215
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 190
+	Log_Or_Exp : Log_Or_Exp OR2 Log_And_Exp .  (76)
+	Log_And_Exp : Log_And_Exp . AND2 Log_Not_Exp  (78)
+
+	AND2  shift 160
+	';'  reduce 76
+	')'  reduce 76
+	']'  reduce 76
+	OR2  reduce 76
+	','  reduce 76
+
+
+state 191
+	Log_And_Exp : Log_And_Exp AND2 Log_Not_Exp .  (78)
+
+	.  reduce 78
+
+
+state 192
+	Com_Exp : Com_Exp NEQ Add_Min_Exp .  (87)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 87
+	')'  reduce 87
+	']'  reduce 87
+	AND2  reduce 87
+	OR2  reduce 87
+	NEQ  reduce 87
+	SLT  reduce 87
+	BLT  reduce 87
+	SLTE  reduce 87
+	BLTE  reduce 87
+	EE  reduce 87
+	','  reduce 87
+
+
+state 193
+	Com_Exp : Com_Exp SLT Add_Min_Exp .  (82)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 82
+	')'  reduce 82
+	']'  reduce 82
+	AND2  reduce 82
+	OR2  reduce 82
+	NEQ  reduce 82
+	SLT  reduce 82
+	BLT  reduce 82
+	SLTE  reduce 82
+	BLTE  reduce 82
+	EE  reduce 82
+	','  reduce 82
+
+
+state 194
+	Com_Exp : Com_Exp BLT Add_Min_Exp .  (86)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 86
+	')'  reduce 86
+	']'  reduce 86
+	AND2  reduce 86
+	OR2  reduce 86
+	NEQ  reduce 86
+	SLT  reduce 86
+	BLT  reduce 86
+	SLTE  reduce 86
+	BLTE  reduce 86
+	EE  reduce 86
+	','  reduce 86
+
+
+state 195
+	Com_Exp : Com_Exp SLTE Add_Min_Exp .  (83)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 83
+	')'  reduce 83
+	']'  reduce 83
+	AND2  reduce 83
+	OR2  reduce 83
+	NEQ  reduce 83
+	SLT  reduce 83
+	BLT  reduce 83
+	SLTE  reduce 83
+	BLTE  reduce 83
+	EE  reduce 83
+	','  reduce 83
+
+
+state 196
+	Com_Exp : Com_Exp BLTE Add_Min_Exp .  (85)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 85
+	')'  reduce 85
+	']'  reduce 85
+	AND2  reduce 85
+	OR2  reduce 85
+	NEQ  reduce 85
+	SLT  reduce 85
+	BLT  reduce 85
+	SLTE  reduce 85
+	BLTE  reduce 85
+	EE  reduce 85
+	','  reduce 85
+
+
+state 197
+	Com_Exp : Com_Exp EE Add_Min_Exp .  (84)
+	Add_Min_Exp : Add_Min_Exp . PLUS Mul_Exp  (89)
+	Add_Min_Exp : Add_Min_Exp . MINUS Mul_Exp  (90)
+
+	PLUS  shift 167
+	MINUS  shift 168
+	';'  reduce 84
+	')'  reduce 84
+	']'  reduce 84
+	AND2  reduce 84
+	OR2  reduce 84
+	NEQ  reduce 84
+	SLT  reduce 84
+	BLT  reduce 84
+	SLTE  reduce 84
+	BLTE  reduce 84
+	EE  reduce 84
+	','  reduce 84
+
+
+state 198
+	Add_Min_Exp : Add_Min_Exp PLUS Mul_Exp .  (89)
+	Mul_Exp : Mul_Exp . MUL Unary_Exp  (92)
+	Mul_Exp : Mul_Exp . DIV Unary_Exp  (93)
+	Mul_Exp : Mul_Exp . MOD Unary_Exp  (94)
+
+	MUL  shift 169
+	DIV  shift 170
+	MOD  shift 171
+	';'  reduce 89
+	')'  reduce 89
+	']'  reduce 89
+	PLUS  reduce 89
+	MINUS  reduce 89
+	AND2  reduce 89
+	OR2  reduce 89
+	NEQ  reduce 89
+	SLT  reduce 89
+	BLT  reduce 89
+	SLTE  reduce 89
+	BLTE  reduce 89
+	EE  reduce 89
+	','  reduce 89
+
+
+state 199
+	Add_Min_Exp : Add_Min_Exp MINUS Mul_Exp .  (90)
+	Mul_Exp : Mul_Exp . MUL Unary_Exp  (92)
+	Mul_Exp : Mul_Exp . DIV Unary_Exp  (93)
+	Mul_Exp : Mul_Exp . MOD Unary_Exp  (94)
+
+	MUL  shift 169
+	DIV  shift 170
+	MOD  shift 171
+	';'  reduce 90
+	')'  reduce 90
+	']'  reduce 90
+	PLUS  reduce 90
+	MINUS  reduce 90
+	AND2  reduce 90
+	OR2  reduce 90
+	NEQ  reduce 90
+	SLT  reduce 90
+	BLT  reduce 90
+	SLTE  reduce 90
+	BLTE  reduce 90
+	EE  reduce 90
+	','  reduce 90
+
+
+state 200
+	Mul_Exp : Mul_Exp MUL Unary_Exp .  (92)
+
+	.  reduce 92
+
+
+state 201
+	Mul_Exp : Mul_Exp DIV Unary_Exp .  (93)
+
+	.  reduce 93
+
+
+state 202
+	Mul_Exp : Mul_Exp MOD Unary_Exp .  (94)
+
+	.  reduce 94
+
+
+state 203
+	Array_Exp : Array_Exp '[' Exp ']' .  (50)
+
+	.  reduce 50
+
+
+state 204
+	Left_Exp : IDENTIFIER '(' Exp_List ')' .  (110)
+
+	.  reduce 110
+
+
+state 205
+	Exp_List : Exp_List ',' . Exp  (112)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 216
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 206
+	For_Exp : ';' .  (66)
+
+	.  reduce 66
+
+
+state 207
+	For_Exp : Exp . ';'  (67)
+
+	';'  shift 217
+	.  error
+
+
+state 208
+	For_S : FOR '(' For_Exp . For_Exp Exp ')' Main_Content_Func  (65)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	';'  shift 206
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 207
+	For_Exp  goto 218
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 209
+	While_S : WHILE '(' Exp . ')' Main_Content_Func  (63)
+
+	')'  shift 219
+	.  error
+
+
+state 210
+	Main_Content_Func : '{' $$4 . Dec_List $$5 Statement_List '}'  (39)
+	Dec_List : .  (40)
+
+	.  reduce 40
+
+	Dec_List  goto 220
+
+
+state 211
+	While_S : DO Main_Content_Func WHILE . '(' Exp ')' ';'  (64)
+
+	'('  shift 221
+	.  error
+
+
+state 212
+	IF_S : IF '(' Exp . ')' Main_Content_Func  (68)
+	IF_S : IF '(' Exp . ')' Main_Content_Func ELSE Main_Content_Func  (69)
+
+	')'  shift 222
+	.  error
+
+
+state 213
+	Switch_S : SWITCH '(' IDENTIFIER . ')' '{' Switch_Cont '}'  (51)
+
+	')'  shift 223
+	.  error
+
+
+state 214
+	End_S : RETURN Exp ';' .  (73)
+
+	.  reduce 73
+
+
+state 215
+	Simple_S : Var '=' Exp . ';'  (48)
+
+	';'  shift 224
+	.  error
+
+
+state 216
+	Exp_List : Exp_List ',' Exp .  (112)
+
+	.  reduce 112
+
+
+state 217
+	For_Exp : Exp ';' .  (67)
+
+	.  reduce 67
+
+
+state 218
+	For_S : FOR '(' For_Exp For_Exp . Exp ')' Main_Content_Func  (65)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 225
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 219
+	While_S : WHILE '(' Exp ')' . Main_Content_Func  (63)
+
+	'{'  shift 181
+	.  error
+
+	Main_Content_Func  goto 226
+
+
+state 220
+	Main_Content_Func : '{' $$4 Dec_List . $$5 Statement_List '}'  (39)
+	Dec_List : Dec_List . Dec  (41)
+	$$5 : .  (38)
+
+	VOID  shift 1
+	INT  shift 2
+	DOUBLE  shift 3
+	BOOL  shift 4
+	CHAR  shift 5
+	IDENTIFIER  reduce 38
+	FOR  reduce 38
+	WHILE  reduce 38
+	DO  reduce 38
+	IF  reduce 38
+	SWITCH  reduce 38
+	RETURN  reduce 38
+	BREAK  reduce 38
+	CONTINUE  reduce 38
+	'}'  reduce 38
+
+	Func_Dec  goto 59
+	Dec  goto 60
+	Func_Dec1  goto 10
+	Re_Type_Spec  goto 12
+	Normal_Dec  goto 13
+	$$5  goto 227
+
+
+state 221
+	While_S : DO Main_Content_Func WHILE '(' . Exp ')' ';'  (64)
+
+	IDENTIFIER  shift 65
+	INT_P  shift 66
+	DOUBLE_P  shift 67
+	SCIEN_P  shift 68
+	CHAR_P  shift 69
+	STR_P  shift 70
+	TRUE  shift 71
+	FALSE  shift 72
+	'('  shift 73
+	MINUS  shift 102
+	N  shift 103
+	.  error
+
+	Var  goto 74
+	Left_Exp  goto 75
+	Exp  goto 228
+	Log_Or_Exp  goto 105
+	Log_And_Exp  goto 106
+	Log_Not_Exp  goto 107
+	Com_Exp  goto 108
+	Add_Min_Exp  goto 109
+	Mul_Exp  goto 110
+	Unary_Exp  goto 111
+	Postfix_Exp  goto 112
+
+
+state 222
+	IF_S : IF '(' Exp ')' . Main_Content_Func  (68)
+	IF_S : IF '(' Exp ')' . Main_Content_Func ELSE Main_Content_Func  (69)
+
+	'{'  shift 181
+	.  error
+
+	Main_Content_Func  goto 229
+
+
+state 223
+	Switch_S : SWITCH '(' IDENTIFIER ')' . '{' Switch_Cont '}'  (51)
+
+	'{'  shift 230
+	.  error
+
+
+state 224
+	Simple_S : Var '=' Exp ';' .  (48)
+
+	.  reduce 48
+
+
+state 225
+	For_S : FOR '(' For_Exp For_Exp Exp . ')' Main_Content_Func  (65)
+
+	')'  shift 231
+	.  error
+
+
+state 226
+	While_S : WHILE '(' Exp ')' Main_Content_Func .  (63)
+
+	.  reduce 63
+
+
+state 227
+	Main_Content_Func : '{' $$4 Dec_List $$5 . Statement_List '}'  (39)
+	Statement_List : .  (61)
+
+	.  reduce 61
+
+	Statement_List  goto 232
+
+
+state 228
+	While_S : DO Main_Content_Func WHILE '(' Exp . ')' ';'  (64)
+
+	')'  shift 233
+	.  error
+
+
+state 229
+	IF_S : IF '(' Exp ')' Main_Content_Func .  (68)
+	IF_S : IF '(' Exp ')' Main_Content_Func . ELSE Main_Content_Func  (69)
+
+	ELSE  shift 234
+	IDENTIFIER  reduce 68
+	FOR  reduce 68
+	WHILE  reduce 68
+	DO  reduce 68
+	IF  reduce 68
+	SWITCH  reduce 68
+	RETURN  reduce 68
+	BREAK  reduce 68
+	CONTINUE  reduce 68
+	CASE  reduce 68
+	DEFAULT  reduce 68
+	'}'  reduce 68
+
+
+state 230
+	Switch_S : SWITCH '(' IDENTIFIER ')' '{' . Switch_Cont '}'  (51)
+
+	CASE  shift 235
+	.  error
+
+	Switch_Cont  goto 236
+	Case_L  goto 237
+	Case_One  goto 238
+
+
+state 231
+	For_S : FOR '(' For_Exp For_Exp Exp ')' . Main_Content_Func  (65)
+
+	'{'  shift 181
+	.  error
+
+	Main_Content_Func  goto 239
+
+
+state 232
+	Main_Content_Func : '{' $$4 Dec_List $$5 Statement_List . '}'  (39)
+	Statement_List : Statement_List . Statement  (62)
+
+	IDENTIFIER  shift 30
+	FOR  shift 139
+	WHILE  shift 140
+	DO  shift 141
+	IF  shift 142
+	SWITCH  shift 143
+	RETURN  shift 144
+	BREAK  shift 145
+	CONTINUE  shift 146
+	'}'  shift 240
+	.  error
+
+	Var  goto 148
+	Statement  goto 149
+	Simple_S  goto 150
+	Switch_S  goto 151
+	While_S  goto 152
+	For_S  goto 153
+	IF_S  goto 154
+	End_S  goto 155
+
+
+state 233
+	While_S : DO Main_Content_Func WHILE '(' Exp ')' . ';'  (64)
+
+	';'  shift 241
+	.  error
+
+
+state 234
+	IF_S : IF '(' Exp ')' Main_Content_Func ELSE . Main_Content_Func  (69)
+
+	'{'  shift 181
+	.  error
+
+	Main_Content_Func  goto 242
+
+
+state 235
+	Case_One : CASE . INT_P ':' Statement_Many  (56)
+	Case_One : CASE . CHAR_P ':' Statement_Many  (57)
+
+	INT_P  shift 243
+	CHAR_P  shift 244
+	.  error
+
+
+state 236
+	Switch_S : SWITCH '(' IDENTIFIER ')' '{' Switch_Cont . '}'  (51)
+
+	'}'  shift 245
+	.  error
+
+
+state 237
+	Switch_Cont : Case_L .  (52)
+	Switch_Cont : Case_L . Default_Cont  (53)
+	Case_L : Case_L . Case_One  (55)
+
+	CASE  shift 235
+	DEFAULT  shift 246
+	'}'  reduce 52
+
+	Default_Cont  goto 247
+	Case_One  goto 248
+
+
+state 238
+	Case_L : Case_One .  (54)
+
+	.  reduce 54
+
+
+state 239
+	For_S : FOR '(' For_Exp For_Exp Exp ')' Main_Content_Func .  (65)
+
+	.  reduce 65
+
+
+state 240
+	Main_Content_Func : '{' $$4 Dec_List $$5 Statement_List '}' .  (39)
+
+	.  reduce 39
+
+
+state 241
+	While_S : DO Main_Content_Func WHILE '(' Exp ')' ';' .  (64)
+
+	.  reduce 64
+
+
+state 242
+	IF_S : IF '(' Exp ')' Main_Content_Func ELSE Main_Content_Func .  (69)
+
+	.  reduce 69
+
+
+state 243
+	Case_One : CASE INT_P . ':' Statement_Many  (56)
+
+	':'  shift 249
+	.  error
+
+
+state 244
+	Case_One : CASE CHAR_P . ':' Statement_Many  (57)
+
+	':'  shift 250
+	.  error
+
+
+state 245
+	Switch_S : SWITCH '(' IDENTIFIER ')' '{' Switch_Cont '}' .  (51)
+
+	.  reduce 51
+
+
+state 246
+	Default_Cont : DEFAULT . ':' Statement_Many  (60)
+
+	':'  shift 251
+	.  error
+
+
+state 247
+	Switch_Cont : Case_L Default_Cont .  (53)
+
+	.  reduce 53
+
+
+state 248
+	Case_L : Case_L Case_One .  (55)
+
+	.  reduce 55
+
+
+state 249
+	Case_One : CASE INT_P ':' . Statement_Many  (56)
+	Statement_Many : .  (58)
+
+	.  reduce 58
+
+	Statement_Many  goto 252
+
+
+state 250
+	Case_One : CASE CHAR_P ':' . Statement_Many  (57)
+	Statement_Many : .  (58)
+
+	.  reduce 58
+
+	Statement_Many  goto 253
+
+
+state 251
+	Default_Cont : DEFAULT ':' . Statement_Many  (60)
+	Statement_Many : .  (58)
+
+	.  reduce 58
+
+	Statement_Many  goto 254
+
+
+state 252
+	Case_One : CASE INT_P ':' Statement_Many .  (56)
+	Statement_Many : Statement_Many . Statement  (59)
+
+	IDENTIFIER  shift 30
+	FOR  shift 139
+	WHILE  shift 140
+	DO  shift 141
+	IF  shift 142
+	SWITCH  shift 143
+	RETURN  shift 144
+	BREAK  shift 145
+	CONTINUE  shift 146
+	CASE  reduce 56
+	DEFAULT  reduce 56
+	'}'  reduce 56
+
+	Var  goto 148
+	Statement  goto 255
+	Simple_S  goto 150
+	Switch_S  goto 151
+	While_S  goto 152
+	For_S  goto 153
+	IF_S  goto 154
+	End_S  goto 155
+
+
+state 253
+	Case_One : CASE CHAR_P ':' Statement_Many .  (57)
+	Statement_Many : Statement_Many . Statement  (59)
+
+	IDENTIFIER  shift 30
+	FOR  shift 139
+	WHILE  shift 140
+	DO  shift 141
+	IF  shift 142
+	SWITCH  shift 143
+	RETURN  shift 144
+	BREAK  shift 145
+	CONTINUE  shift 146
+	CASE  reduce 57
+	DEFAULT  reduce 57
+	'}'  reduce 57
+
+	Var  goto 148
+	Statement  goto 255
+	Simple_S  goto 150
+	Switch_S  goto 151
+	While_S  goto 152
+	For_S  goto 153
+	IF_S  goto 154
+	End_S  goto 155
+
+
+state 254
+	Statement_Many : Statement_Many . Statement  (59)
+	Default_Cont : DEFAULT ':' Statement_Many .  (60)
+
+	IDENTIFIER  shift 30
+	FOR  shift 139
+	WHILE  shift 140
+	DO  shift 141
+	IF  shift 142
+	SWITCH  shift 143
+	RETURN  shift 144
+	BREAK  shift 145
+	CONTINUE  shift 146
+	'}'  reduce 60
+
+	Var  goto 148
+	Statement  goto 255
+	Simple_S  goto 150
+	Switch_S  goto 151
+	While_S  goto 152
+	For_S  goto 153
+	IF_S  goto 154
+	End_S  goto 155
+
+
+state 255
+	Statement_Many : Statement_Many Statement .  (59)
+
+	.  reduce 59
+
+
+57 terminals, 61 nonterminals
+150 grammar rules, 256 states
