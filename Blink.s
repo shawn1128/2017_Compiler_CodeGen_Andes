@@ -64,14 +64,53 @@ _Z4loopv:
 	! function attributes: None
 	push.s	{ $lp }
 	addi	$sp, $sp, -96
-	! END PROLOGUE    movi $r0, 5000
+	! END PROLOGUE
+    movi $r0, 1
     swi $r0, [$sp+20]
     lwi $r0, [$sp+20]
     swi $r0, [$sp+0]
-    movi $r0, 5000
+.L2:
+    lwi $r0, [$sp+0]
+    swi $r0, [$sp+20]
+    movi $r0, 10
+    swi $r0, [$sp+24]
+    lwi $r0, [$sp+24]
+    lwi $r1, [$sp+20]
+    slts $r0, $r1, $r0
+    zeb $r0, $r0
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
+    beqz $r0, .L3
+    movi $r0, 0
     swi $r0, [$sp+20]
     lwi $r0, [$sp+20]
     swi $r0, [$sp+4]
+    lwi $r0, [$sp+0]
+    swi $r0, [$sp+20]
+    movi $r0, 1000
+    swi $r0, [$sp+24]
+    lwi $r0, [$sp+24]
+    lwi $r1, [$sp+20]
+    mul $r0, $r1, $r0
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
+    swi $r0, [$sp+4]
+    movi $r0, 13
+    movi $r1, 1
+    bal digitalWrite
+    lwi $r0, [$sp+4]
+    bal delay
+    movi $r0, 13
+    movi $r1, 0
+    bal digitalWrite
+    lwi $r0, [$sp+4]
+    bal delay
+    j .L2
+.L3:
+    movi $r0, 3000
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
+    swi $r0, [$sp+0]
     movi $r0, 13
     movi $r1, 1
     bal digitalWrite
@@ -80,10 +119,9 @@ _Z4loopv:
     movi $r0, 13
     movi $r1, 0
     bal digitalWrite
-    lwi $r0, [$sp+4]
+    lwi $r0, [$sp+0]
     bal delay
-    movi $r0, 0
-    swi $r0, [$sp+20]
+
 	! BEGIN EPILOGUE
 	addi	$sp, $sp, 96
 	pop.s	{ $lp }

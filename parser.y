@@ -246,17 +246,16 @@ IF_S: IF '(' Exp ')'
       PopReg(0);
       fprintf(f_asm, "    beqz $r0, .L%d\n", LabelNum);
     }
-    Main_Content_Func
+    Main_Content_Func Main_Sec
+    ;
+
+Main_Sec: 
+
     {
       fprintf(f_asm, ".L%d:\n", LabelNum);
       LabelNum++;
     }
-	| IF '(' Exp ')' 
-    {
-      PopReg(0);
-      fprintf(f_asm, "    beqz $r0, .L%d\n", LabelNum);
-    } 
-    Main_Content_Func ELSE 
+	| ELSE 
     {
       fprintf(f_asm, "    j .L%d\n", LabelNum+1);
       fprintf(f_asm, ".L%d:\n", LabelNum);
