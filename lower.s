@@ -1,5 +1,5 @@
 	! BEGIN EPILOGUE
-	addi	$sp, $sp, 24
+	addi	$sp, $sp, 96
 	pop.s	{ $lp }
 	ret
 	! END EPILOGUE

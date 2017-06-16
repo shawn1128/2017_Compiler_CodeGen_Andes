@@ -1,46 +1,20 @@
-    movi $r0, 3000
-    push.s { $r0 }
-    pop.s { $r0 }
+    movi $r0, 5000
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
     swi $r0, [$sp+0]
-    movi $r0, 3000
-    push.s { $r0 }
-    pop.s { $r0 }
-    swi $r0, [$sp+4]
-    lwi $r0, [$sp+0]
-    push.s { $r0 }
-    movi $r0, 3
-    push.s { $r0 }
-    pop.s { $r2 }
-    pop.s { $r3 }
-    divsr $r0, $r1, $r3, $r2
-    push.s { $r0 }
-    lwi $r0, [$sp+4]
-    push.s { $r0 }
-    movi $r0, 3
-    push.s { $r0 }
-    pop.s { $r0 }
-    pop.s { $r1 }
-    mul $r0, $r1, $r0
-    push.s { $r0 }
-    pop.s { $r0 }
-    pop.s { $r1 }
-    add $r0, $r1, $r0
-    push.s { $r0 }
-    lwi $r0, [$sp+4]
-    push.s { $r0 }
-    pop.s { $r0 }
-    pop.s { $r1 }
-    sub $r0, $r1, $r0
-    push.s { $r0 }
-    pop.s { $r0 }
+    movi $r0, 5000
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
     swi $r0, [$sp+4]
     movi $r0, 13
+    movi $r1, 1
     bal digitalWrite
     lwi $r0, [$sp+0]
     bal delay
     movi $r0, 13
+    movi $r1, 0
     bal digitalWrite
     lwi $r0, [$sp+4]
     bal delay
     movi $r0, 0
-    push.s { $r0 }
+    swi $r0, [$sp+20]

@@ -19,6 +19,18 @@ int cur_counter = 0;
 int cur_scope   = 1;
 char *copys();
 
+int stackOffset = 4 * 5 - 4;
+void PushReg(int reg)
+{
+    stackOffset += 4;
+    fprintf(f_asm, "    swi $r%d, [$sp+%d]\n", reg, stackOffset);
+}
+
+void PopReg(int reg)
+{
+    fprintf(f_asm, "    lwi $r%d, [$sp+%d]\n", reg, stackOffset);
+    stackOffset -= 4;
+}
 /*
 
   init_symbol_table();

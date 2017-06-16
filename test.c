@@ -1,8 +1,8 @@
 int main() {
-  int a = 3000;
-  int b = 3000;
+  int a = 5000;
+  int b = 5000;
 
-  b = a / 3 + b * 3 - b;
+  //b = a / 3 + b * 3 - b;
 
   digitalWrite(13, HIGH);
   delay(a);

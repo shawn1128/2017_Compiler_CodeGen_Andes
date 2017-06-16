@@ -118,6 +118,10 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
 	fprintf(f_asm, "    movi $r1, 0\n");
 	}
  
+<DIGITALWRITE>"HIGH" {
+	fprintf(f_asm, "    movi $r1, 1\n");
+	}
+
 <DIGITALWRITE>{ID} {
         int index = look_up_symbol(yytext);
 
@@ -128,7 +132,7 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
                 fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
                 break;
             case LOCAL_MODE:
-                fprintf(f_asm, "    lwi $r0, [$fp-%d]\n",table[index].offset*4);
+                fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
                 break;
             /* global */
         }
@@ -136,9 +140,7 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
 
 
 
-<DIGITALWRITE>"HIGH" {
-	fprintf(f_asm, "    movi $r1, 1\n");
-	}
+
 <DIGITALWRITE>");" {
 	fprintf(f_asm, "    bal digitalWrite\n");
 	BEGIN(INITIAL);
@@ -163,7 +165,7 @@ STR \"((\\(n|t|\\|\"))|[^"\n])*\"
                 fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
                 break;
             case LOCAL_MODE:
-                fprintf(f_asm, "    lwi $r0, [$fp-%d]\n",table[index].offset*4);
+                fprintf(f_asm, "    lwi $r0, [$sp+%d]\n",table[index].offset*4);
                 break;
             /* global */
         }

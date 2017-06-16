@@ -64,4 +64,31 @@ _Z4loopv:
 	! function attributes: None
 	push.s	{ $lp }
 	addi	$sp, $sp, -96
-	! END PROLOGUE
+	! END PROLOGUE    movi $r0, 5000
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
+    swi $r0, [$sp+0]
+    movi $r0, 5000
+    swi $r0, [$sp+20]
+    lwi $r0, [$sp+20]
+    swi $r0, [$sp+4]
+    movi $r0, 13
+    movi $r1, 1
+    bal digitalWrite
+    lwi $r0, [$sp+0]
+    bal delay
+    movi $r0, 13
+    movi $r1, 0
+    bal digitalWrite
+    lwi $r0, [$sp+4]
+    bal delay
+    movi $r0, 0
+    swi $r0, [$sp+20]
+	! BEGIN EPILOGUE
+	addi	$sp, $sp, 96
+	pop.s	{ $lp }
+	ret
+	! END EPILOGUE
+	.size	_Z4loopv, .-_Z4loopv
+	.ident	"GCC: (2015-08-24_nds32le-elf-mculib-v3m) 4.9.2"
+	! ------------------------------------
